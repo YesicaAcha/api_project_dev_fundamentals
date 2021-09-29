@@ -29,7 +29,7 @@ jobs:
           pip install coveralls
 
       - name: Run tests
-        run: pytest /api_project_dev_fundamentals/tests/unit
+        run: pytest
 
   release:
     name: Release
