@@ -4,6 +4,9 @@ from flask import (
     request
 )
 
+from truck_delivery_yess.client_manager import ClientManager
+from truck_delivery_yess.driver_manager import DriverManager
+
 trucks = [
     {
         'id': 0,
@@ -146,7 +149,8 @@ def get_drivers():
     Return:
         drivers(list): list with all the drivers
     """
-    return jsonify(drivers)
+    driver_manager = DriverManager()
+    return jsonify(driver_manager.get_all())
 
 
 @app.route(f"{API_NAME}/drivers/<int:driver_id>", methods=["GET"])
@@ -234,6 +238,34 @@ def get_truck_by_driver(driver_id_or_name):
             return jsonify({"message": "The driver doesn't have a valid truck assigned."})
         else:
             return jsonify(truck_to_return)
+
+
+@app.route(f"{API_NAME}/clients", methods=["GET"])
+def get_clients():
+    """
+    get_clients --> list all the clients
+    Return:
+        clients(list): list with all the clients
+    """
+    client_manager = ClientManager()
+    return jsonify(client_manager.get_all())
+
+
+@app.route(f"{API_NAME}/clients/<int:client_id>", methods=["GET"])
+def get_client_by_id(client_id):
+    """
+    get_client_by_id --> gets a client by id
+    Args:
+        client_id(int): The client id
+    Return:
+        client(dict): The client information
+    """
+    client_manager = ClientManager()
+    client_to_return = client_manager.get_document(client_id)
+    if client_to_return is None:
+        return jsonify({"message": "The driver doesn't seem to exist. Please enter a valid driver ID."})
+    else:
+        return jsonify(client_to_return)
 
 
 if __name__ == "__main__":

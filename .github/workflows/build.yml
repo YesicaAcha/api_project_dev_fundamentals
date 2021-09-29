@@ -1,0 +1,32 @@
+name: build
+on:
+  push:
+    branches:
+      - api-project
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ 3.8 , 3.9 ]
+        os: [ ubuntu-18.04 ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run:
+          pip install -r requirements.txt
+          pip install -r dev_requirements.txt
+          pip install coveralls
+
+      - name: Run tests
+        run: pytest

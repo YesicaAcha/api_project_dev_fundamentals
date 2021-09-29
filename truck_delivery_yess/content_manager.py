@@ -1,16 +1,18 @@
 from abc import ABCMeta, abstractmethod
 
+from truck_delivery_yess.db_connector.db_connector_redis import DBConnectorRedis
+
 
 class ContentManager(metaclass=ABCMeta):
-    def __init__(self):
+    def __init__(self, connector=None):
+        self._db_connector = connector if connector else DBConnectorRedis()
+
+    @abstractmethod
+    def save_document(self, document):
         pass
 
     @abstractmethod
-    def save_document(self):
-        pass
-
-    @abstractmethod
-    def get_document(self):
+    def get_document(self, document_id):
         pass
 
     @abstractmethod
@@ -18,5 +20,5 @@ class ContentManager(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def delete(self):
+    def delete(self, document_id):
         pass

@@ -1,0 +1,5 @@
+
+UUID = "d24ec66b-1e36-11ec-9466-d45d64af5739"
+
+CLIENT_ID_PREFIX = f"{UUID}-client"
+DRIVER_ID_PREFIX = f"{UUID}-driver"
