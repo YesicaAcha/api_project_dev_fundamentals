@@ -1,0 +1,7 @@
+db_connection:
+  host: "localhost"
+  port: 6379
+
+logger:
+  level: 10
+  enable_file: true

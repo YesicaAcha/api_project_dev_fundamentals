@@ -1,4 +1,4 @@
-from truck_delivery_yess.person import Person
+from truck_delivery_yess.model.person import Person
 
 
 class Driver(Person):
