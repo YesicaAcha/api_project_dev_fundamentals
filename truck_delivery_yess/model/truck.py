@@ -1,4 +1,4 @@
-from truck_delivery_yess.vehicle import Vehicle
+from truck_delivery_yess.model.vehicle import Vehicle
 
 
 class Truck(Vehicle):

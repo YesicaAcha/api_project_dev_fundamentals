@@ -17,6 +17,5 @@ class Person(metaclass=ABCMeta):
         something --> This method needs to be implemented
         Arg:
         Returns:
-
         """
-        pass
+    pass

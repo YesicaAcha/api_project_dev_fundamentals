@@ -1,18 +1,22 @@
-import redis
+from redis import (
+    Redis,
+    ConnectionError
+)
 import json
 
 from singleton_decorator import singleton
 
 from truck_delivery_yess.db_connector.db_connector import DBConnector
 from truck_delivery_yess.util.configuration import Configuration
+from truck_delivery_yess.util.exceptions import DataBaseConnectionError
 
 
 @singleton
 class DBConnectorRedis(DBConnector):
 
     def __init__(self):
-        self.__connection = redis.Redis(host=Configuration().get_db_connection_host(),
-                                        port=Configuration().get_db_connection_port())
+        self.__connection = Redis(host=Configuration().get_db_connection_host(),
+                                  port=Configuration().get_db_connection_port())
 
     def save(self, id_save, object_to_save):
         """
@@ -25,7 +29,10 @@ class DBConnectorRedis(DBConnector):
             True if the object was save, False otherwise
         """
         encode_data = json.dumps(object_to_save)
-        result_save = self.__connection.set(id_save, encode_data)
+        try:
+            result_save = self.__connection.set(id_save, encode_data)
+        except ConnectionError:
+            raise DataBaseConnectionError()
         return result_save
 
     def get_by_id(self, id):
@@ -36,7 +43,11 @@ class DBConnectorRedis(DBConnector):
         Returns:
             The object with the id
         """
-        result_get = self.__connection.get(id)
+        try:
+            result_get = self.__connection.get(id)
+        except ConnectionError:
+            raise DataBaseConnectionError()
+
         if result_get is None:
             return None
         else:
@@ -50,10 +61,15 @@ class DBConnectorRedis(DBConnector):
             A list with the objects saved in the database
         """
         list_objects = []
-        list_ids = [id for id in self.__connection.scan_iter(count=20)]
+        try:
+            list_ids = [id for id in self.__connection.scan_iter(count=20)]
+        except ConnectionError:
+            raise DataBaseConnectionError()
+
         if len(list_ids) > 0:
             list_objects = self.__connection.mget(list_ids)
             list_objects = [json.loads(obj) for obj in list_objects]
+
         return list_objects
 
     def get_by_pattern(self, pattern):
@@ -66,7 +82,10 @@ class DBConnectorRedis(DBConnector):
         """
         pattern = f"{pattern}*"
         list_objects = []
-        list_ids = [id for id in self.__connection.scan_iter(match=pattern, count=20)]
+        try:
+            list_ids = [id for id in self.__connection.scan_iter(match=pattern, count=20)]
+        except ConnectionError:
+            raise DataBaseConnectionError()
         if len(list_ids) > 0:
             list_objects = self.__connection.mget(list_ids)
             list_objects = [json.loads(obj) for obj in list_objects]
@@ -81,5 +100,8 @@ class DBConnectorRedis(DBConnector):
         Returns:
             True if the object was removed, false otherwise
         """
-        result_delete = self.__connection.delete(id)
+        try:
+            result_delete = self.__connection.delete(id)
+        except ConnectionError:
+            raise DataBaseConnectionError()
         return result_delete is 1
